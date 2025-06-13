@@ -1,9 +1,11 @@
 from flask import Flask, redirect, render_template, request, url_for, flash, get_flashed_messages
-from validator import validate
+from users_example.validator import validate
 import psycopg2
-from repository import UserRepository
+from users_example.repository import UserRepository
 
-app = Flask(__name__)
+
+template_dir = '../templates'
+app = Flask(__name__, template_folder=template_dir)
 app.secret_key = "SECRET KEY"
 conn = psycopg2.connect(
         dbname="hexlet", user="egor-t", host="localhost", password='qwerty'
@@ -33,7 +35,7 @@ def users_show(id):
     user = repo.find(id)
     if user:
         messages = get_flashed_messages(with_categories=True)
-        return render_template('/users/show.html', user=user, messages=messages)
+        return render_template('users/show.html', user=user, messages=messages)
     else:
         return 'No such user', 404
 
@@ -45,7 +47,7 @@ def users_index():
     else:
         users = repo.get_content()
     messages = get_flashed_messages(with_categories=True)
-    return render_template('/users/index.html', users=users,
+    return render_template('users/index.html', users=users,
                            search=query, messages=messages)
 
 @app.route('/users/<id>/edit')
